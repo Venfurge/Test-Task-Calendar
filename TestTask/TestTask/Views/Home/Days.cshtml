@@ -1,0 +1,40 @@
+﻿@model CalendarDaysModel
+@{
+    ViewData["Title"] = "Days";
+}
+
+<div class="text-center">
+    <div>
+        @Html.ActionLink("Previous", "Days", "Home", new { date = ViewData["PreviousDate"] })
+        @Html.ActionLink("Next", "Days", "Home", new { date = ViewData["NextDate"] })
+    </div>
+    <br />
+
+    <div class="d-flex flex-row flex-wrap">
+        @foreach (string dayName in Model.WeekDaysNames)
+        {
+
+            <div style="width: 14%; height: 40px" 
+                 class="d-flex justify-content-center bg-light border">
+                @dayName
+            </div>
+            <br />
+        }
+    </div>
+
+    <div class="d-flex flex-row flex-wrap">
+        @foreach (DayModel day in Model.Days)
+        {
+            <a style="width: 14%; height: 40px" class="d-flex justify-content-center bg-light border"
+               href="@Url.Action("Tasks", "Home", new { date = day.Date })">
+                <div>@day.Date.Day</div>
+
+                @if (day.TasksCount > 0)
+                {
+                    <div>(@day.TasksCount)</div>
+                }
+            </a>
+            <br />
+        }
+    </div>
+</div>
