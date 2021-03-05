@@ -32,19 +32,41 @@ namespace TestTask.Services
             var daysList = await list.Select(v => DayMapper.Map(v))
                 .ToListAsync();
 
-            //Taking all days of the month and mapping them to DayModel
             var emptyDaysList = Enumerable.Range(1, DateTime.DaysInMonth(year, month))
-               .Select(day =>
-               {
-                   return new DayModel()
-                   {
-                       Date = new DateTime(year, month, day),
-                       TasksCount = null,
-                   };
-               }).ToList();
+                .Select(day => new DateTime(year, month, day)).ToList();
+
+            //First day of current month
+            var firstDay = emptyDaysList[0];
+
+            //Days of other monthes for full calendar
+            var eitherDays = new List<DateTime>();
+
+            //Taking last days of the previous month
+            for (int i = 1; i < (int)firstDay.DayOfWeek; i++)
+            {
+                eitherDays.Add(firstDay.AddDays(-i));
+            }
+
+            int previousMonthDays = eitherDays.Count;
+
+            //Taking first days of the next month
+            for (int i = 0; i < 42 - emptyDaysList.Count - previousMonthDays; i++)
+            {
+                eitherDays.Add(firstDay.AddMonths(1).AddDays(i));
+            }
+
+            var calendarDays = emptyDaysList.Concat(eitherDays)
+                .Select(day =>
+                {
+                    return new DayModel()
+                    {
+                        Date = day,
+                        TasksCount = null,
+                    };
+                }).ToList();
 
             //Changing empty days from list with days with tasks
-            var result = emptyDaysList.Where(v => !daysList.Any(x => x.Date == v.Date))
+            var result = calendarDays.Where(v => !daysList.Any(x => x.Date == v.Date))
                 .Union(daysList).OrderBy(v => v.Date).ToList();
 
             return result;

@@ -31,6 +31,7 @@ namespace TestTask.Controllers
                     date = DateTime.Now;
 
                 ViewData["CurrentDate"] = date.Value;
+                ViewData["CurrentMonth"] = date.Value.Month;
                 ViewData["PreviousDate"] = date.Value.AddMonths(-1);
                 ViewData["NextDate"] = date.Value.AddMonths(1);
 
